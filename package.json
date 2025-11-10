@@ -1,0 +1,36 @@
+{
+  "name": "tcsas-devtools-mcp-server",
+  "version": "0.0.1",
+  "description": "An MCP (Model Context Protocol) server to integrate TCSAS-Devtools with AI assistants, enabling natural language control for miniprogram development tasks like launching, previewing, and uploading.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "tsc": "tsc",
+    "devins": "npm run tsc && npx -y @modelcontextprotocol/inspector node ./build/index.js",
+    "dev": "npm run tsc && node ./build/index.js",
+    "start": "node ./build/index.js",
+    "debug": "npx -y @modelcontextprotocol/inspector",
+    "dev:full": "npm run tsc && (npm run start & npm run debug)",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "tcsas-devtools-mcp-server": "build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.20.1",
+    "express": "^5.1.0",
+    "tencentcloud-sdk-nodejs-intl-en": "^3.0.1270",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/inspector": "^0.17.1",
+    "@types/node": "^24.8.1",
+    "typescript": "^5.9.3"
+  }
+}
