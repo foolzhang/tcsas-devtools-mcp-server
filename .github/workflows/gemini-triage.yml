@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 7
     outputs:
       available_labels: '${{ steps.get_labels.outputs.available_labels }}'
-      selected_labels: '${{ env.SELECTED_LABELS }}'
+      selected_labels: '${{ steps.read_labels.outputs.selected_labels }}'
     permissions:
       contents: 'read'
       id-token: 'write'
@@ -143,12 +143,24 @@ jobs:
                 echo "SELECTED_LABELS=bug,enhancement" >> "/tmp/runner/env"
                 ```
 
+      - name: 'Read selected labels from environment'
+        id: 'read_labels'
+        if: always() && steps.gemini_analysis.outcome == 'success'
+        run: |
+          if [ -n "$SELECTED_LABELS" ]; then
+            echo "Found selected labels: $SELECTED_LABELS"
+            echo "selected_labels=$SELECTED_LABELS" >> $GITHUB_OUTPUT
+          else
+            echo "No labels were selected"
+            echo "selected_labels=" >> $GITHUB_OUTPUT
+          fi
+
   label:
     runs-on: 'ubuntu-latest'
     needs:
       - 'triage'
     if: |-
-      ${{ needs.triage.outputs.selected_labels != '' }}
+      ${{ needs.triage.outputs.selected_labels != '' && needs.triage.outputs.selected_labels != null }}
     permissions:
       contents: 'read'
       issues: 'write'
