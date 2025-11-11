@@ -145,13 +145,22 @@ jobs:
 
       - name: 'Read selected labels from environment'
         id: 'read_labels'
+        # 显式地将 SELECTED_LABELS 环境变量注入到当前步骤的执行环境中
+        env:
+          # ${ { env.SELECTED_LABELS } } 会在 Job 运行时解析为当前 Job 环境中的 SELECTED_LABELS 值
+          # 因为它是在上一步写入 GITHUB_ENV 文件后被加载的。
+          SELECTED_LABELS_FROM_ENV: ${{ env.SELECTED_LABELS }} 
         if: always() && steps.gemini_analysis.outcome == 'success'
         run: |
-          if [ -n "$SELECTED_LABELS" ]; then
-            echo "Found selected labels: $SELECTED_LABELS"
-            echo "selected_labels=$SELECTED_LABELS" >> $GITHUB_OUTPUT
+          # 引用注入的环境变量，它比裸的 $SELECTED_LABELS 更加稳定可靠
+          SELECTED_LABELS_VALUE="${{ env.SELECTED_LABELS_FROM_ENV }}"
+          
+          if [ -n "$SELECTED_LABELS_VALUE" ]; then
+            echo "Found selected labels: $SELECTED_LABELS_VALUE"
+            # 写入步骤输出，以便 Job Outputs 可以引用
+            echo "selected_labels=$SELECTED_LABELS_VALUE" >> $GITHUB_OUTPUT
           else
-            echo "No labels were selected"
+            echo "No labels were selected (Final check)"
             echo "selected_labels=" >> $GITHUB_OUTPUT
           fi
 
