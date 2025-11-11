@@ -5,3 +5,7 @@ package-lock.json
 build
 build2
 .claude
+# gemini-cli settings
+.gemini/
+# GitHub App credentials
+gha-creds-*.json
